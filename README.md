@@ -8,7 +8,8 @@ https://demo-simple-issue-stream.herokuapp.com?user_token=249734g73h4g9shdnvosdn
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/WebDevEngines/simple-issue-stream)
 
-Set environment:  
+### Environment
+
 ```
 export GITHUB_USERNAME='username'
 export GITHUB_PASSWORD='password'
