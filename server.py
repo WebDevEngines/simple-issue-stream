@@ -2,6 +2,7 @@ from github import Github
 from flask import Response
 from flask import Flask
 from flask import request
+from xml.sax.saxutils import escape
 
 import re
 
@@ -22,7 +23,8 @@ def get_issues():
 
     if username and password and repository:
         def stream_issues(username, password, repo_name):
-            yield "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><rows>"
+            yield "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+            yield "<rows>\n"
             g = Github(username, password)
             states = ["open", "closed"]
             for repo in g.get_user().get_repos():
@@ -31,21 +33,31 @@ def get_issues():
                         for issue in repo.get_issues(state=state):
                             number = issue.number
                             title = issue.title
-                            assignee = issue.assignee.name if issue.assignee else None
+                            assignee = issue.assignee.name if issue.assignee else ""
                             labels = ",".join([x.name for x in issue.labels])
                             created_at = issue.created_at.strftime("%m/%d/%Y")
-                            closed_at = issue.closed_at.strftime("%m/%d/%Y") if issue.closed_at else None
-                            milestone_title = None
-                            milestone_number = None
+                            closed_at = issue.closed_at.strftime("%m/%d/%Y") if issue.closed_at else ""
+                            milestone_title = ""
+                            milestone_number = ""
                             milestone = issue.milestone
                             if milestone:
                                 milestone_title = milestone.title
                                 match = re.search("(\d+) - .*", milestone.title)
                                 if match:
                                     milestone_number = int(match.group(1))                            
-                            yield "<row><number>%s</number><state>%s</state><title>%s</title><assignee>%s</assignee><labels>%s</labels><created_at>%s</created_at><closed_at>%s</closed_at><milestone_title>%s</milestone_title><milestone_number>%s</milestone_number></row>" % (number, state, title, assignee, labels, created_at, closed_at, milestone_title, milestone_number)
+                            yield "<row><number>%s</number><state>%s</state><title>%s</title><assignee>%s</assignee><labels>%s</labels><created_at>%s</created_at><closed_at>%s</closed_at><milestone_title>%s</milestone_title><milestone_number>%s</milestone_number></row>\n" % (
+                                number, 
+                                state, 
+                                escape(title) if title else "",  
+                                escape(assignee) if assignee else "", 
+                                escape(labels) if labels else "",
+                                created_at,
+                                closed_at,
+                                escape(milestone_title) if milestone_title else "",
+                                milestone_number
+                            )
                     break
-            yield "</rows>"
+            yield "</rows>\n"
         return Response(
             stream_issues(username, password, repository), mimetype="text/xml"
         )
