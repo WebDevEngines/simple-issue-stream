@@ -1,12 +1,11 @@
 {
   "name": "Simple Issue Stream",
-  "description": "",
   "success_url": "/",
   "formation": {
     "web": {
       "quantity": 1,
       "size": "Hobby"
-    },
+    }
   },
   "image": "heroku/python"
 }
