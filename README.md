@@ -1,9 +1,17 @@
 ## Simple Issue Stream
 Stream Github issues in a simplified CSV format  
 
-Use from Google Sheets:  
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/WebDevEngines/simple-issue-stream)
+
+Set environment:  
 ```
-=IMPORTDATA("https://simple-issue-stream.herokuapp.com/?username=<github_username>&password=<github_password>&repository=<github_repository>")
+export GITHUB_USERNAME='username'
+export GITHUB_PASSWORD='password'
+export GITHUB_REPOSITORY='repo'
+export TOKEN='random_token'
 ```
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/WebDevEngines/simple-issue-stream)
+Use from Google Sheets:  
+```
+=IMPORTDATA("https://<your-heroku-app>.herokuapp.com/?user_token=<random_token>")
+```

@@ -6,6 +6,7 @@ from StringIO import StringIO
 
 import re
 import csv
+import os
 
 
 app = Flask(__name__)
@@ -19,14 +20,18 @@ def remove_non_ascii(text):
 
 @app.route("/", methods=["GET"])
 def get_issues():
+    username = os.environ.get("GITHUB_USERNAME", None)
+    password = os.environ.get("GITHUB_PASSWORD", None)
+    repository = os.environ.get("GITHUB_REPOSITORY", None)
+    token = os.environ.get("TOKEN", None)
+
     try:
-        username = request.args.get("username")
-        password = request.args.get("password")
-        repository = request.args.get("repository")
+        user_token = request.args.get("user_token")
     except:
-        username = None
-        password = None
-        repository = None
+        user_token = None
+
+    if token != user_token:
+        return Response("Access denied", 401)
 
     if username and password and repository:
         def stream_issues(username, password, repo_name):
