@@ -12,6 +12,12 @@ import os
 app = Flask(__name__)
 
 
+username = os.environ.get("GITHUB_USERNAME", None)
+password = os.environ.get("GITHUB_PASSWORD", None)
+repository = os.environ.get("GITHUB_REPOSITORY", None)
+token = os.environ.get("TOKEN", None)
+
+
 def remove_non_ascii(text):
     if text:
         return "".join([i if ord(i) < 128 else " " for i in text])
@@ -20,11 +26,6 @@ def remove_non_ascii(text):
 
 @app.route("/", methods=["GET"])
 def get_issues():
-    username = os.environ.get("GITHUB_USERNAME", None)
-    password = os.environ.get("GITHUB_PASSWORD", None)
-    repository = os.environ.get("GITHUB_REPOSITORY", None)
-    token = os.environ.get("TOKEN", None)
-
     try:
         user_token = request.args.get("user_token")
     except:
