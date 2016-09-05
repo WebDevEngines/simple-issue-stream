@@ -78,7 +78,7 @@ def get_issues():
             stream_issues(username, password, repository), mimetype="application/csv"
         )
 
-    return Response("user_token missing", 400)
+    return Response("Setup incorrect or missing parameters", 400)
 
 if __name__ == "__main__":
     app.run(debug=True)

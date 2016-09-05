@@ -20,5 +20,5 @@ export TOKEN='random_token'
 ### Google Sheets Integration
 
 ```
-=IMPORTDATA("https://<your-heroku-app>.herokuapp.com/?user_token=<random_token>")
+=IMPORTDATA("https://<your-heroku-app>.herokuapp.com/?user_token=<TOKEN>")
 ```
