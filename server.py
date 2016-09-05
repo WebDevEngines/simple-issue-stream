@@ -77,16 +77,8 @@ def get_issues():
         return Response(
             stream_issues(username, password, repository), mimetype="application/csv"
         )
-    else:
-        return Response("""
-        <html>
-        <body>
-            <h4>Simple Issue Stream Usage:</h4>
-            <p>/?username=&lt;github_username&gt;&password=&lt;github_password&gt;&repository=&lt;github_repository&gt;</p>
-        </body>
-        </html>
-        """, mimetype="text/html")
 
+    return Response("user_token missing", 400)
 
 if __name__ == "__main__":
     app.run(debug=True)
