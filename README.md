@@ -1,5 +1,5 @@
 ## Simple Issue Stream
-Stream Github issues in a simplified CSV format  
+Github Issues to CSV  
 
 ### Demo
 https://demo-simple-issue-stream.herokuapp.com?user_token=249734g73h4g9shdnvosdnjv0824hg24908hg0eingpeg
