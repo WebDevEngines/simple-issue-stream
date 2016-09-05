@@ -1,6 +1,11 @@
 ## Simple Issue Stream
 Stream Github issues in a simplified CSV format  
 
+### Demo
+https://demo-simple-issue-stream.herokuapp.com?user_token=249734g73h4g9shdnvosdnjv0824hg24908hg0eingpeg
+
+### Deployment
+
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/WebDevEngines/simple-issue-stream)
 
 Set environment:  
@@ -10,6 +15,8 @@ export GITHUB_PASSWORD='password'
 export GITHUB_REPOSITORY='repo'
 export TOKEN='random_token'
 ```
+
+### Google Sheets Integration
 
 Use from Google Sheets:  
 ```
