@@ -2,12 +2,19 @@ from github import Github
 from flask import Response
 from flask import Flask
 from flask import request
-from xml.sax.saxutils import escape
+from StringIO import StringIO
 
 import re
+import csv
 
 
 app = Flask(__name__)
+
+
+def remove_non_ascii(text):
+    if text:
+        return "".join([i if ord(i) < 128 else " " for i in text])
+    return ""
 
 
 @app.route("/", methods=["GET"])
@@ -23,12 +30,11 @@ def get_issues():
 
     if username and password and repository:
         def stream_issues(username, password, repo_name):
-            yield "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
-            yield "<rows>\n"
             g = Github(username, password)
             states = ["open", "closed"]
             for repo in g.get_user().get_repos():
                 if repo.name == repo_name:
+                    yield "number,title,assignee,labels,created_at,closed_at,milestone_title,milestone_number\n"
                     for state in states:
                         for issue in repo.get_issues(state=state):
                             number = issue.number
@@ -38,28 +44,32 @@ def get_issues():
                             created_at = issue.created_at.strftime("%m/%d/%Y")
                             closed_at = issue.closed_at.strftime("%m/%d/%Y") if issue.closed_at else ""
                             milestone_title = ""
-                            milestone_number = ""
+                            milestone_number = 0
                             milestone = issue.milestone
                             if milestone:
                                 milestone_title = milestone.title
                                 match = re.search("(\d+) - .*", milestone.title)
                                 if match:
                                     milestone_number = int(match.group(1))                            
-                            yield "<row><number>%s</number><state>%s</state><title>%s</title><assignee>%s</assignee><labels>%s</labels><created_at>%s</created_at><closed_at>%s</closed_at><milestone_title>%s</milestone_title><milestone_number>%s</milestone_number></row>\n" % (
-                                number, 
-                                state, 
-                                escape(title) if title else "",  
-                                escape(assignee) if assignee else "", 
-                                escape(labels) if labels else "",
-                                created_at,
-                                closed_at,
-                                escape(milestone_title) if milestone_title else "",
-                                milestone_number
-                            )
+                            output = StringIO()
+                            try:
+                                writer = csv.writer(output)
+                                writer.writerow([
+                                    number,
+                                    remove_non_ascii(title),
+                                    remove_non_ascii(assignee),
+                                    remove_non_ascii(labels),
+                                    created_at,
+                                    closed_at,
+                                    remove_non_ascii(milestone_title),
+                                    milestone_number
+                                ])
+                                yield output.getvalue()
+                            finally:
+                                output.close()
                     break
-            yield "</rows>\n"
         return Response(
-            stream_issues(username, password, repository), mimetype="text/xml"
+            stream_issues(username, password, repository), mimetype="application/csv"
         )
     else:
         return Response("""
